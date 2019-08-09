@@ -1,4 +1,4 @@
-package com.sejin.ciapilab.github.vo;
+package com.sejin.ciapilab.api.ci.github.vo;
 
 import lombok.Getter;
 

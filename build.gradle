@@ -24,10 +24,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
-    compile "org.springframework:spring-web"
-    compile "com.fasterxml.jackson.core:jackson-databind"
+    compile 'org.springframework:spring-web'
+    compile 'org.springframework.boot:spring-boot-starter-aop'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'

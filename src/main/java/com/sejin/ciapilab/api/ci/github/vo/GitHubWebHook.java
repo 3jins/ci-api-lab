@@ -1,13 +1,12 @@
-package com.sejin.ciapilab.github.vo;
+package com.sejin.ciapilab.api.ci.github.vo;
 
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.ArrayList;
 
-@Getter
-@ToString
-public class GitHubWebHookResponse {
+@Getter @ToString
+public class GitHubWebHook {
     private String ref;
     private String before;  // commit hash code before this
     private String after;   // commit hash code after this
