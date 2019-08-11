@@ -1,14 +1,9 @@
 package com.sejin.ciapilab.api.ci.travisci;
 
-import org.aspectj.lang.annotation.AfterReturning;
+import com.sejin.ciapilab.api.ci.travisci.vo.TravisCiWebHook;
 
 public class TravisCiWebHookHandler {
-    @AfterReturning(
-            pointcut = "execution(* com.sejin.ciapilab.api.ci.travisci.*Controller.handleWebHook(..))",
-            returning = "webHook"
-    )
-    public void handleWebHook(Object webHook) {
-        if (webHook == null) return; // Haven't received any web hook yet
+    public void handleTravisCiWebHook(TravisCiWebHook webHook) {
         System.out.println(webHook.toString());
     }
 }

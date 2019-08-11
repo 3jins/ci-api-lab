@@ -1,9 +1,11 @@
 package com.sejin.ciapilab.api.ci.travisci.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TravisCiWebHook {
     private String id;
     private int number; // build sequence

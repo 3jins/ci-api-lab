@@ -1,33 +1,42 @@
 package com.sejin.ciapilab.api.ci.localtest;
 
-import com.sejin.ciapilab.api.ci.github.vo.GitHubWebHook;
-import com.sejin.ciapilab.api.ci.travisci.vo.TravisCiWebHook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+
 @Profile("local")
-@Controller
+@Component
 public class WebHookMediator {
     private final WebHookMediatorConfig webHookMediatorConfig;
+    private LocalWebHookController localWebHookController;
     private RestTemplate restTemplate = new RestTemplate();
 
-    public WebHookMediator(WebHookMediatorConfig webHookMediatorConfig) {
+    @Autowired
+    public WebHookMediator(WebHookMediatorConfig webHookMediatorConfig, LocalWebHookController localWebHookController) {
         this.webHookMediatorConfig = webHookMediatorConfig;
+        this.localWebHookController = localWebHookController;
     }
 
-    public Object checkIfWebHookIsFired() {
+    @Scheduled(fixedDelayString = "${webHookMediatorConfig.pollingPeriod}")
+    public void checkIfWebHookIsFired() {
         String senderUrl = webHookMediatorConfig.getUrl() + webHookMediatorConfig.getSenderApi();
         String bodyUrl = webHookMediatorConfig.getUrl() + webHookMediatorConfig.getBodyApi();
         String sender = restTemplate.getForObject(senderUrl, String.class);
 
-        if (sender == null) return null;
-        if (sender.equals(webHookMediatorConfig.getGitHubSenderName())) {
-            return restTemplate.getForObject(bodyUrl, GitHubWebHook.class);
-        } else if (sender.equals(webHookMediatorConfig.getTravisCiSenderName())) {
-            return restTemplate.getForObject(bodyUrl, TravisCiWebHook.class);
+        try {
+            if (sender.equals(webHookMediatorConfig.getGitHubSenderName())) {
+                String webHookRaw = restTemplate.getForObject(bodyUrl, String.class);
+                localWebHookController.handleGitHubWebHook(webHookRaw);
+            } else if (sender.equals(webHookMediatorConfig.getTravisCiSenderName())) {
+                String webHookRaw = restTemplate.getForObject(bodyUrl, String.class);
+                localWebHookController.handleTravisCiWebHook(webHookRaw);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return null;
     }
 }
