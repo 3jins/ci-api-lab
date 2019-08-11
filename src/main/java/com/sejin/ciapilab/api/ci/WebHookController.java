@@ -14,11 +14,13 @@ import java.io.IOException;
 public class WebHookController {
 
     @PostMapping("/github")
+    @WebHookPostProcess(apiName = CiApi.GITHUB)
     public GitHubWebHook handleGitHubWebHook(@RequestBody GitHubWebHook webHook) {
         return webHook;
     }
 
     @PostMapping("/travisci")
+    @WebHookPostProcess(apiName = CiApi.TRAVISCI)
     public TravisCiWebHook handleTravisCiWebHook(@RequestBody String webHook) throws IOException {
         return (new BodyParser()).parseUrlEncoded(webHook, TravisCiWebHook.class);
     }

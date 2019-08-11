@@ -17,19 +17,18 @@ public class WebHookPostProcessor {
         System.out.println(travisCiWebHook.toString());
     }
 
-    @AfterReturning(
-            pointcut = "execution(* com.sejin.ciapilab.api.ci.localtest.LocalWebHookController.handle*WebHook(..)) " +
-                    "|| execution(* com.sejin.ciapilab.api.ci.WebHookController.handle*WebHook(..)))",
-            returning = "webHook"
-    )
-    public void postProcess(Object webHook) {
-        if (webHook instanceof GitHubWebHook) {
-            postProcessGitHubWebHook((GitHubWebHook) webHook);
-        } else if (webHook instanceof TravisCiWebHook) {
-            postProcessTravisCiWebHook((TravisCiWebHook) webHook);
-        } else {
-            // TODO: Write a log
-            System.out.println("Unknown type of web hook has arrived");
+    @AfterReturning(pointcut = "@annotation(webHookPostProcess)", returning = "webHook")
+    public void postProcess(Object webHook, WebHookPostProcess webHookPostProcess) {
+        switch(webHookPostProcess.apiName()) {
+            case GITHUB:
+                postProcessGitHubWebHook((GitHubWebHook) webHook);
+                break;
+            case TRAVISCI:
+                postProcessTravisCiWebHook((TravisCiWebHook) webHook);
+                break;
+            default:
+                // TODO: Write a log
+                System.out.println("Unknown type of web hook has arrived");
         }
     }
 }
